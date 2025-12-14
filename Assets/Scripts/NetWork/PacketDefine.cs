@@ -39,12 +39,9 @@ namespace CSBaseLib
     {
         REQ_RES_TEST_ECHO = 101,
         
-               
         // 클라이언트
         CS_BEGIN        = 1001,
 
-        REQ_LOGIN       = 1002,
-        RES_LOGIN       = 1003,
         NTF_MUST_CLOSE       = 1005,
 
         REQ_ROOM_ENTER = 1015,
@@ -56,24 +53,13 @@ namespace CSBaseLib
         RES_ROOM_LEAVE = 1022,
         NTF_ROOM_LEAVE_USER = 1023,
 
-        REQ_ROOM_CHAT = 1026,
-        NTF_ROOM_CHAT = 1027,
-
-
         REQ_ROOM_DEV_ALL_ROOM_START_GAME = 1091,
         RES_ROOM_DEV_ALL_ROOM_START_GAME = 1092,
 
         REQ_ROOM_DEV_ALL_ROOM_END_GAME = 1093,
         RES_ROOM_DEV_ALL_ROOM_END_GAME = 1094,
 
-        REQ_USER_ACCESSION = 1095,
-        RES_USER_ACCESSION = 1096,
-
-        REQ_USER_INFO_UPDATE = 1097,
-        RES_USER_INFO_UPDATE = 1098,
-
-        REQ_USER_INFO_DELETE = 1099,
-        RES_USER_INFO_DELETE = 1100,
+        
 
         REQ_USER_SEARCH = 1101,
         RES_USER_SEARCH = 1102,
@@ -102,6 +88,28 @@ namespace CSBaseLib
         // DB 8101 ~ 9000
         REQ_DB_LOGIN = 8101,
         RES_DB_LOGIN = 8102,
+
+        //====================================================
+        //내가 사용할 패킷 아이디
+        //로그인
+        REQ_LOGIN = 1002,
+        RES_LOGIN = 1003,
+
+        //채팅 
+        REQ_ROOM_CHAT = 1026,
+        NTF_ROOM_CHAT = 1027,
+
+        //회원가입
+        REQ_USER_ACCESSION = 1095,
+        RES_USER_ACCESSION = 1096,
+
+        //회원정보 수정
+        REQ_USER_INFO_UPDATE = 1097,
+        RES_USER_INFO_UPDATE = 1098,
+
+        //회원탈퇴
+        REQ_USER_INFO_DELETE = 1099,
+        RES_USER_INFO_DELETE = 1100,
     }
 
     

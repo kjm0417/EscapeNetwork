@@ -41,6 +41,15 @@ public sealed class NetworkManager
 
     public static NetworkManager Instance => _instance.Value;
 
+    // ì´ë²¤íŠ¸ ì •ì˜ (UI ì‹±ê¸€í†¤ê³¼ í•¨ê»˜ ì‚¬ìš©)
+    public static event System.Action<string> OnLoginSuccess;
+    public static event System.Action<string> OnLoginFailed;
+    public static event System.Action OnRegisterSuccess;
+    public static event System.Action<string> OnRegisterFailed;
+    public static event System.Action OnUpdateSuccess;
+    public static event System.Action<string> OnUpdateFailed;
+    public static event System.Action OnDeleteAccountSuccess;
+
     private bool _isInitialized = false;
 
     CLIENT_STATE ClientState = CLIENT_STATE.NONE;
@@ -57,9 +66,9 @@ public sealed class NetworkManager
     PacketBufferManager PacketBuffer = new PacketBufferManager();
     Queue<PacketData> RecvPacketQueue = new Queue<PacketData>();
     Queue<byte[]> SendPacketQueue = new Queue<byte[]>();
-    
 
-    // ¿ÜºÎ¿¡¼­ ÀÎ½ºÅÏ½º »ı¼º ºÒ°¡ 
+
+    // ì™¸ë¶€ì—ì„œ ì¸ìŠ¤í„´ìŠ¤ ìƒì„± ë¶ˆê°€
     private NetworkManager()
     {
     }
@@ -71,7 +80,7 @@ public sealed class NetworkManager
             Debug.LogWarning("NetworkManager is already initialized.");
             return;
         }
-        // ³×Æ®¿öÅ© ÃÊ±âÈ­ ÄÚµå ÀÛ¼º
+        // ë„¤íŠ¸ì›Œí¬ ì´ˆê¸°í™” ì½”ë“œ ì‘ì„±
         PacketBuffer.Init((8096 * 10), CSBaseLib.PacketDef.PACKET_HEADER_SIZE, 1024);
 
         IsNetworkThreadRunning = true;
@@ -88,11 +97,11 @@ public sealed class NetworkManager
         if (bNetwork)
         {
             ClientState = CLIENT_STATE.CONNECTED;
-            Debug.Log("¼­¹ö¿¡ Á¢¼Ó ¼º°ø !!!");
+            Debug.Log("ë²„ì— ì—°ê²° ì„±ê³µ");
         }
         else
         {
-            Debug.Log("¼­¹ö¿¡ Á¢¼Ó ½ÇÆĞ !!!");
+            Debug.Log("ì„œë²„ì— ì—°ê²° ì‹¤íŒ¨ !!!");
         }
 
         Debug.Log("NetworkManager initialized.");
@@ -167,13 +176,12 @@ public sealed class NetworkManager
                         RecvPacketQueue.Enqueue(packet);
                     }
                 }
-                //DevLog.Write($"¹ŞÀº µ¥ÀÌÅÍ: {recvData.Item2}", LOG_LEVEL.INFO);
             }
             else
             {
                 Network.Close();
                 SetDisconnectd();
-                Debug.Log(string.Format("¼­¹ö¿Í Á¢¼Ó Á¾·á !!! {0}", LOG_LEVEL.INFO));
+                Debug.Log(string.Format("ì„œë²„ ì—°ê²°ì´ ëŠì–´ì§ !!! {0}", LOG_LEVEL.INFO));
             }
         }
     }
@@ -207,14 +215,14 @@ public sealed class NetworkManager
         SendPacketQueue.Clear();
 
         //ClearUIRoomOut();
-        //labelStatus.Text = "¼­¹ö Á¢¼ÓÀÌ ²÷¾îÁü";
+        //labelStatus.Text = "ì„œë²„ ì—°ê²°ì´ ëŠì–´ì§";
     }
 
     public void PostSendPacket(byte[] sendData)
     {
         if (Network.IsConnected() == false)
         {
-            Debug.Log("¼­¹ö ¿¬°áÀÌ µÇ¾î ÀÖÁö ¾Ê½À´Ï´Ù");
+            Debug.Log("ì„œë²„ ì—°ê²°ì´ ë˜ì–´ ìˆì§€ ì•ŠìŠµë‹ˆë‹¤");
             return;
         }
 
@@ -230,13 +238,64 @@ public sealed class NetworkManager
         PostSendPacket(sendData);
     }
 
+    public void SendLoginRequest(string username, string password)
+    {
+        var request = new CSBaseLib.PKTReqLogin() { UserID = username, Password = password };
+        var Body = MessagePackSerializer.Serialize(request);
+        var sendData = CSBaseLib.PacketToBytes.Make(CSBaseLib.PACKETID.REQ_LOGIN, Body);
+        PostSendPacket(sendData);
+        Debug.Log($"ë¡œê·¸ì¸ ìš”ì²­ ì „ì†¡: {username}");
+    }
+
+    public void SendRegisterRequest(string password, string userID)
+    {
+        var request = new CSBaseLib.PKTReqUserAccession() 
+        { 
+            UserID = userID, 
+            Password = password, 
+        };
+        var Body = MessagePackSerializer.Serialize(request);
+        var sendData = CSBaseLib.PacketToBytes.Make(CSBaseLib.PACKETID.REQ_USER_ACCESSION, Body);
+        PostSendPacket(sendData);
+        Debug.Log($"íšŒì›ê°€ì… ìš”ì²­ ì „ì†¡: {userID}");
+    }
+
+    public void SendUpdateUserRequest(string userID, string newPassword)
+    {
+        var request = new CSBaseLib.PKTReqUserInfoUpdate() 
+        { 
+            UserID = userID, 
+            NewPassword = newPassword 
+        };
+        var Body = MessagePackSerializer.Serialize(request);
+        var sendData = CSBaseLib.PacketToBytes.Make(CSBaseLib.PACKETID.REQ_USER_INFO_UPDATE, Body);
+        PostSendPacket(sendData);
+        Debug.Log("ì‚¬ìš©ì ì •ë³´ ì—…ë°ì´íŠ¸ ìš”ì²­ ì „ì†¡");
+    }
+
+    //public void SendDeleteAccountRequest()
+    //{
+    //    var request = new CSBaseLib.PKTReqUserInfoDelete() { };
+    //    var Body = MessagePackSerializer.Serialize(request);
+    //    var sendData = CSBaseLib.PacketToBytes.Make(CSBaseLib.PACKETID.REQ_USER_INFO_DELETE, Body);
+    //    PostSendPacket(sendData);
+    //    Debug.Log("ê³„ì • ì‚­ì œ ìš”ì²­ ì „ì†¡");
+    //}
+
+    public void SendLogoutRequest()
+    {
+        // ë¡œê·¸ì•„ì›ƒì€ í´ë¼ì´ì–¸íŠ¸ì—ì„œ ìƒíƒœë§Œ ë³€ê²½
+        ClientState = CLIENT_STATE.CONNECTED;
+        Debug.Log("ë¡œê·¸ì•„ì›ƒ ì™„ë£Œ");
+    }
+
     void PacketProcess(PacketData packet)
     {
         switch ((PACKETID)packet.PacketID)
         {
             case PACKETID.REQ_RES_TEST_ECHO:
                 {
-                    Debug.Log(string.Format("Echo ÀÀ´ä: {0} - {1}", packet.BodyData.Length, LOG_LEVEL.INFO));                    
+                    Debug.Log(string.Format("Echo ì‘ë‹µ: {0} - {1}", packet.BodyData.Length, LOG_LEVEL.INFO));                    
                     break;
                 }
             case PACKETID.RES_LOGIN:
@@ -246,11 +305,13 @@ public sealed class NetworkManager
                     if (resData.Result == (short)ERROR_CODE.NONE)
                     {
                         ClientState = CLIENT_STATE.LOGIN;
-                        Debug.Log(string.Format("·Î±×ÀÎ ¼º°ø -{0}", LOG_LEVEL.INFO));
+                        OnLoginSuccess?.Invoke(resData.UserID);
+                        Debug.Log("ë¡œê·¸ì¸ ì„±ê³µ");
                     }
                     else
                     {
-                        Debug.Log(string.Format("·Î±×ÀÎ ½ÇÆĞ: {0} {1}", resData.Result, ((ERROR_CODE)resData.Result).ToString()));
+                        OnLoginFailed?.Invoke(((ERROR_CODE)resData.Result).ToString());
+                        Debug.Log($"ë¡œê·¸ì¸ ì‹¤íŒ¨: {((ERROR_CODE)resData.Result).ToString()}");
                     }
                 }
                 break;
@@ -262,11 +323,11 @@ public sealed class NetworkManager
                     if (resData.Result == (short)ERROR_CODE.NONE)
                     {
                         ClientState = CLIENT_STATE.ROOM;
-                        Debug.Log("¹æ ÀÔÀå ¼º°ø");
+                        Debug.Log("ë°© ì…ì¥ ì„±ê³µ");
                     }
                     else
                     {
-                        Debug.Log(string.Format("¹æÀÔÀå ½ÇÆĞ: {0} {1}", resData.Result, ((ERROR_CODE)resData.Result).ToString()));
+                        Debug.Log(string.Format("ë°© ì…ì¥ ì‹¤íŒ¨ : {0} {1}", resData.Result, ((ERROR_CODE)resData.Result).ToString()));
                     }
                 }
                 break;
@@ -303,22 +364,54 @@ public sealed class NetworkManager
 
             case PACKETID.RES_USER_ACCESSION:
                 {
+                    var resData = MessagePackSerializer.Deserialize<PKTResUserAccession>(packet.BodyData);
+                    
+                    if (resData.Result == (short)ERROR_CODE.NONE)
+                    {
+                        OnRegisterSuccess?.Invoke();
+                    }
+                    else
+                    {
+                        OnRegisterFailed?.Invoke(((ERROR_CODE)resData.Result).ToString());
+                    }
                 }
                 break;
 
             case PACKETID.RES_USER_INFO_UPDATE:
                 {
+                    var resData = MessagePackSerializer.Deserialize<PKTResUserInfoUpdate>(packet.BodyData);
+                    
+                    if (resData.Result == (short)ERROR_CODE.NONE)
+                    {
+                        OnUpdateSuccess?.Invoke();
+                    }
+                    else
+                    {
+                        OnUpdateFailed?.Invoke(((ERROR_CODE)resData.Result).ToString());
+                    }
                 }
                 break;
 
-            case PACKETID.RES_USER_INFO_DELETE:
-                {
-                }
-                break;
+            //case PACKETID.RES_USER_INFO_DELETE:
+            //    {
+            //        var resData = MessagePackSerializer.Deserialize<PKTResUserInfoDelete>(packet.BodyData);
+            //        var authUI = FindObjectOfType<UserAuthUI>();
+                    
+            //        if (resData.Result == (short)ERROR_CODE.NONE)
+            //        {
+            //            authUI?.OnDeleteAccountSuccess();
+            //            ClientState = CLIENT_STATE.CONNECTED;
+            //        }
+            //        else
+            //        {
+            //            Debug.LogError($"ê³„ì • ì‚­ì œ ì‹¤íŒ¨: {((ERROR_CODE)resData.Result).ToString()}");
+            //        }
+            //    }
+            //    break;
 
             case PACKETID.RES_USER_SCORE_UPDATE:
                 {
-                    Debug.Log("Á¡¼ö ¾÷µ¥ÀÌÆ® ÀÀ´ä ¹ŞÀ½");
+                    Debug.Log("ì ìˆ˜ ì—…ë°ì´íŠ¸ ì‘ë‹µ ë°›ìŒ");
                 }
                 break;
         }

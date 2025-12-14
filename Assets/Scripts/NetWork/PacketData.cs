@@ -55,23 +55,6 @@ namespace CSBaseLib
         }
     }
 
-    // 로그인 요청
-    [MessagePackObject]
-    public class PKTReqLogin
-    {
-        [Key(0)]
-        public string UserID;
-        [Key(1)]
-        public string AuthToken;
-    }
-
-    [MessagePackObject]
-    public class PKTResLogin
-    {
-        [Key(0)]
-        public short Result;
-    }
-
 
     [MessagePackObject]
     public class PKNtfMustClose
@@ -165,5 +148,63 @@ namespace CSBaseLib
         public string UserID;
         [Key(1)]
         public int NewScore;
+    }
+
+    //===============================================================
+    //내가 사용할 패킷들
+    // 로그인 요청
+    [MessagePackObject]
+    public class PKTReqLogin
+    {
+        [Key(0)]
+        public string UserID;
+        [Key(1)]
+        public string Password;
+    }
+
+    [MessagePackObject]
+    public class PKTResLogin
+    {
+        [Key(0)]
+        public string UserID;
+        [Key(1)]
+        public string Password;
+        [Key(2)]
+        public short Result;
+    }
+
+    //회원가입 요청
+    [MessagePackObject]
+    public class PKTReqUserAccession
+    {
+        [Key(0)]
+        public string UserID;
+        [Key(1)]
+        public string Password;
+    }
+
+    [MessagePackObject]
+    public class PKTResUserAccession
+    {
+        [Key(0)]
+        public short Result;
+    }
+
+
+    //회원 정보 변경
+    [MessagePackObject]
+    public class PKTReqUserInfoUpdate
+    {
+        [Key(0)]
+        public string UserID;
+        [Key(1)]
+        public string NewPassword;
+    }
+
+    [MessagePackObject]
+    public class PKTResUserInfoUpdate
+    {
+        [Key(0)]
+        public short Result;
     }
 }
