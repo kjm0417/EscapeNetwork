@@ -187,6 +187,10 @@ namespace CSBaseLib
     public class PKTResUserAccession
     {
         [Key(0)]
+        public string UserID;
+        [Key(1)]
+        public string Password;
+        [Key(2)]
         public short Result;
     }
 
@@ -199,12 +203,41 @@ namespace CSBaseLib
         public string UserID;
         [Key(1)]
         public string NewPassword;
+        [Key(2)]
+        public string Level;
     }
 
     [MessagePackObject]
     public class PKTResUserInfoUpdate
     {
         [Key(0)]
+        public string UserID;
+        [Key(1)]
+        public string NewPassword;
+        [Key(2)]
+        public string Level;
+        [Key(3)]
+        public short Result;
+    }
+
+    //회원탈퇴
+    [MessagePackObject]
+    public class PKTReqUserInfoDelete
+    {
+        [Key(0)]
+        public string UserID;
+        [Key(1)]
+        public string Password;
+    }
+
+    [MessagePackObject]
+    public class PKTResUserInfoDelete
+    {
+        [Key(0)]
+        public string UserID;
+        [Key(1)]
+        public string Password;
+        [Key(2)]
         public short Result;
     }
 }

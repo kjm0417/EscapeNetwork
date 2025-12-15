@@ -49,6 +49,7 @@ public sealed class NetworkManager
     public static event System.Action OnUpdateSuccess;
     public static event System.Action<string> OnUpdateFailed;
     public static event System.Action OnDeleteAccountSuccess;
+    public static event System.Action<string> OnDeleteAccountFailed;
 
     private bool _isInitialized = false;
 
@@ -273,14 +274,20 @@ public sealed class NetworkManager
         Debug.Log("사용자 정보 업데이트 요청 전송");
     }
 
-    //public void SendDeleteAccountRequest()
-    //{
-    //    var request = new CSBaseLib.PKTReqUserInfoDelete() { };
-    //    var Body = MessagePackSerializer.Serialize(request);
-    //    var sendData = CSBaseLib.PacketToBytes.Make(CSBaseLib.PACKETID.REQ_USER_INFO_DELETE, Body);
-    //    PostSendPacket(sendData);
-    //    Debug.Log("계정 삭제 요청 전송");
-    //}
+    public void SendDeleteAccountRequest(string userID, string password)
+    {
+        var request = new CSBaseLib.PKTReqUserInfoDelete()
+        {
+            UserID = userID,
+            Password = password
+        };
+
+        var body = MessagePackSerializer.Serialize(request);
+        var sendData = CSBaseLib.PacketToBytes.Make(CSBaseLib.PACKETID.REQ_USER_INFO_DELETE, body);
+        PostSendPacket(sendData);
+
+        Debug.Log("계정 삭제 요청 전송");
+    }
 
     public void SendLogoutRequest()
     {
@@ -392,22 +399,21 @@ public sealed class NetworkManager
                 }
                 break;
 
-            //case PACKETID.RES_USER_INFO_DELETE:
-            //    {
-            //        var resData = MessagePackSerializer.Deserialize<PKTResUserInfoDelete>(packet.BodyData);
-            //        var authUI = FindObjectOfType<UserAuthUI>();
-                    
-            //        if (resData.Result == (short)ERROR_CODE.NONE)
-            //        {
-            //            authUI?.OnDeleteAccountSuccess();
-            //            ClientState = CLIENT_STATE.CONNECTED;
-            //        }
-            //        else
-            //        {
-            //            Debug.LogError($"계정 삭제 실패: {((ERROR_CODE)resData.Result).ToString()}");
-            //        }
-            //    }
-            //    break;
+            case PACKETID.RES_USER_INFO_DELETE:
+                {
+                    var resData = MessagePackSerializer.Deserialize<PKTResUserInfoDelete>(packet.BodyData);
+
+                    if (resData.Result == (short)ERROR_CODE.NONE)
+                    {
+                        OnDeleteAccountSuccess?.Invoke();
+                        ClientState = CLIENT_STATE.CONNECTED;
+                    }
+                    else
+                    {
+                        OnDeleteAccountFailed?.Invoke(((ERROR_CODE)resData.Result).ToString());
+                    }
+                }
+                break;
 
             case PACKETID.RES_USER_SCORE_UPDATE:
                 {

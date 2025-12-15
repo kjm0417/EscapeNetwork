@@ -479,10 +479,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   loginPanel: {fileID: 282203980}
-  loginUsernameInput: {fileID: 0}
-  loginPasswordInput: {fileID: 0}
-  loginButton: {fileID: 0}
-  showRegisterButton: {fileID: 0}
+  loginUsernameInput: {fileID: 771219567}
+  loginPasswordInput: {fileID: 1552617983}
+  loginButton: {fileID: 1045415139}
+  showRegisterButton: {fileID: 53659521}
   registerPanel: {fileID: 0}
   registerUsernameInput: {fileID: 0}
   registerPasswordInput: {fileID: 0}
@@ -530,7 +530,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &282203981
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1985,7 +1985,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &778029608
 RectTransform:
   m_ObjectHideFlags: 0

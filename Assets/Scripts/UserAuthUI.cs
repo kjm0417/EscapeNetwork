@@ -4,7 +4,11 @@ using TMPro;
 
 public class UserAuthUI : MonoBehaviour
 {
- 
+    private void Awake()
+    {
+        NetworkManager.Instance.Initialize();
+    }
+
     [Header("Login Panel")]
     [SerializeField] private GameObject loginPanel;
     [SerializeField] private TMP_InputField loginUsernameInput;
@@ -23,17 +27,16 @@ public class UserAuthUI : MonoBehaviour
     [Header("User Info Panel")]
     [SerializeField] private GameObject userInfoPanel;
     [SerializeField] private TMP_Text usernameText;
-    [SerializeField] private TMP_Text emailText;
-    [SerializeField] private Button updateInfoButton;
-    [SerializeField] private Button logoutButton;
-    [SerializeField] private Button deleteAccountButton;
+    //[SerializeField] private Button updateInfoButton;
+    //[SerializeField] private Button logoutButton;
+    //[SerializeField] private Button deleteAccountButton;
 
-    [Header("Update Panel")]
-    [SerializeField] private GameObject updatePanel;
-    [SerializeField] private TMP_InputField updateEmailInput;
-    [SerializeField] private TMP_InputField updatePasswordInput;
-    [SerializeField] private Button confirmUpdateButton;
-    [SerializeField] private Button cancelUpdateButton;
+    //[Header("Update Panel")]
+    //[SerializeField] private GameObject updatePanel;
+    //[SerializeField] private TMP_InputField updateEmailInput;
+    //[SerializeField] private TMP_InputField updatePasswordInput;
+    //[SerializeField] private Button confirmUpdateButton;
+    //[SerializeField] private Button cancelUpdateButton;
 
     private void Start()
     {
@@ -85,13 +88,13 @@ public class UserAuthUI : MonoBehaviour
         showLoginButton.onClick.AddListener(ShowLoginPanel);
 
         // User Info Panel
-        updateInfoButton.onClick.AddListener(ShowUpdatePanel);
-        logoutButton.onClick.AddListener(OnLogoutClick);
-        deleteAccountButton.onClick.AddListener(OnDeleteAccountClick);
+        //updateInfoButton.onClick.AddListener(ShowUpdatePanel);
+        //logoutButton.onClick.AddListener(OnLogoutClick);
+        //deleteAccountButton.onClick.AddListener(OnDeleteAccountClick);
 
         // Update Panel
-        confirmUpdateButton.onClick.AddListener(OnUpdateConfirmClick);
-        cancelUpdateButton.onClick.AddListener(ShowUserInfoPanel);
+        //confirmUpdateButton.onClick.AddListener(OnUpdateConfirmClick);
+        //cancelUpdateButton.onClick.AddListener(ShowUserInfoPanel);
     }
 
     #region Panel Management
@@ -100,7 +103,7 @@ public class UserAuthUI : MonoBehaviour
         loginPanel.SetActive(true);
         registerPanel.SetActive(false);
         userInfoPanel.SetActive(false);
-        updatePanel.SetActive(false);
+        //updatePanel.SetActive(false);
     }
 
     private void ShowRegisterPanel()
@@ -108,7 +111,7 @@ public class UserAuthUI : MonoBehaviour
         loginPanel.SetActive(false);
         registerPanel.SetActive(true);
         userInfoPanel.SetActive(false);
-        updatePanel.SetActive(false);
+        //updatePanel.SetActive(false);
     }
 
     private void ShowUserInfoPanel()
@@ -116,7 +119,7 @@ public class UserAuthUI : MonoBehaviour
         loginPanel.SetActive(false);
         registerPanel.SetActive(false);
         userInfoPanel.SetActive(true);
-        updatePanel.SetActive(false);
+        //updatePanel.SetActive(false);
     }
 
     private void ShowUpdatePanel()
@@ -124,7 +127,7 @@ public class UserAuthUI : MonoBehaviour
         loginPanel.SetActive(false);
         registerPanel.SetActive(false);
         userInfoPanel.SetActive(false);
-        updatePanel.SetActive(true);
+        //updatePanel.SetActive(true);
     }
     #endregion
 
@@ -144,9 +147,8 @@ public class UserAuthUI : MonoBehaviour
     {
         string username = registerUsernameInput.text;
         string password = registerPasswordInput.text;
-        string email = registerEmailInput.text;
 
-        if (ValidateRegisterInput(username, password, email))
+        if (ValidateRegisterInput(username, password))
         {
             NetworkManager.Instance.SendRegisterRequest(password, username);
         }
@@ -166,16 +168,16 @@ public class UserAuthUI : MonoBehaviour
         // NetworkManager.Instance.SendDeleteAccountRequest(); // 주석 처리됨
     }
 
-    private void OnUpdateConfirmClick()
-    {
-        string newEmail = updateEmailInput.text;
-        string newPassword = updatePasswordInput.text;
+    //private void OnUpdateConfirmClick()
+    //{
+    //    string newEmail = updateEmailInput.text;
+    //    string newPassword = updatePasswordInput.text;
 
-        if (ValidateUpdateInput(newEmail, newPassword))
-        {
-            NetworkManager.Instance.SendUpdateUserRequest(usernameText.text, newPassword);
-        }
-    }
+    //    if (ValidateUpdateInput(newEmail, newPassword))
+    //    {
+    //        NetworkManager.Instance.SendUpdateUserRequest(usernameText.text, newPassword);
+    //    }
+    //}
     #endregion
 
     #region Validation
@@ -189,17 +191,11 @@ public class UserAuthUI : MonoBehaviour
         return true;
     }
 
-    private bool ValidateRegisterInput(string username, string password, string email)
+    private bool ValidateRegisterInput(string username, string password)
     {
-        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(email))
+        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
         {
             Debug.LogWarning("모든 필드를 입력해주세요.");
-            return false;
-        }
-
-        if (!email.Contains("@"))
-        {
-            Debug.LogWarning("올바른 이메일 형식을 입력해주세요.");
             return false;
         }
 
@@ -269,7 +265,7 @@ public class UserAuthUI : MonoBehaviour
         registerUsernameInput.text = "";
         registerPasswordInput.text = "";
         registerEmailInput.text = "";
-        updateEmailInput.text = "";
-        updatePasswordInput.text = "";
+        //updateEmailInput.text = "";
+        //updatePasswordInput.text = "";
     }
 }
