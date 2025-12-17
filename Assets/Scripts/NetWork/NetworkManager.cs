@@ -67,6 +67,7 @@ public sealed class NetworkManager
     Queue<PacketData> RecvPacketQueue = new Queue<PacketData>();
     Queue<byte[]> SendPacketQueue = new Queue<byte[]>();
 
+    public string CurrentUserID { get; private set; } //현재 로그인 되어 있는 ID
     /// <summary>
     /// 외부에서 인스턴스 생성 불가
     /// </summary>
@@ -302,19 +303,28 @@ public sealed class NetworkManager
     /// <summary>
     /// 계정 삭제 요청 패킷을 전송한다
     /// </summary>
-    public void SendDeleteAccountRequest(string userID, string password)
+    public void SendDeleteAccountRequest()
     {
+        if (string.IsNullOrEmpty(CurrentUserID))
+        {
+            Debug.LogWarning("로그인된 유저가 없습니다.");
+            return;
+        }
+
         var request = new CSBaseLib.PKTReqUserInfoDelete()
         {
-            UserID = userID,
-            Password = password
+            UserID = CurrentUserID
+            // Password는 지금 구조에서는 굳이 필요 없음
         };
 
         var body = MessagePackSerializer.Serialize(request);
-        var sendData = CSBaseLib.PacketToBytes.Make(CSBaseLib.PACKETID.REQ_USER_INFO_DELETE, body);
-        PostSendPacket(sendData);
+        var sendData = CSBaseLib.PacketToBytes.Make(
+            CSBaseLib.PACKETID.REQ_USER_INFO_DELETE,
+            body
+        );
 
-        Debug.Log("계정 삭제 요청 전송");
+        PostSendPacket(sendData);
+        Debug.Log($"계정 삭제 요청 전송: {CurrentUserID}");
     }
 
     /// <summary>
@@ -338,17 +348,23 @@ public sealed class NetworkManager
                 {
                     var resData = MessagePackSerializer.Deserialize<PKTResLogin>(packet.BodyData);
 
-                    if (resData.Result == (short)ERROR_CODE.NONE)
+                    MainThreadDispatcher.Post(() =>
                     {
-                        ClientState = CLIENT_STATE.LOGIN;
-                        OnLoginSuccess?.Invoke(resData.UserID);
-                        Debug.Log("로그인 성공");
-                    }
-                    else
-                    {
-                        OnLoginFailed?.Invoke(((ERROR_CODE)resData.Result).ToString());
-                        Debug.Log($"로그인 실패: {((ERROR_CODE)resData.Result).ToString()}");
-                    }
+                        if (resData.Result == (short)ERROR_CODE.NONE)
+                        {
+                            ClientState = CLIENT_STATE.LOGIN;
+
+                            CurrentUserID = resData.UserID;
+
+                            OnLoginSuccess?.Invoke(resData.UserID);
+                            Debug.Log("로그인 성공");
+                        }
+                        else
+                        {
+                            OnLoginFailed?.Invoke(((ERROR_CODE)resData.Result).ToString());
+                            Debug.Log($"로그인 실패: {((ERROR_CODE)resData.Result).ToString()}");
+                        }
+                    });
                 }
                 break;
 
@@ -356,34 +372,39 @@ public sealed class NetworkManager
                 {
                     var resData = MessagePackSerializer.Deserialize<PKTResUserAccession>(packet.BodyData);
 
-                    if (resData.Result == (short)ERROR_CODE.NONE)
+                    MainThreadDispatcher.Post(() =>
                     {
-                        OnRegisterSuccess?.Invoke();
-                        Debug.Log("회원가입 성공");
-                    }
-                    else
-                    {
-                        OnRegisterFailed?.Invoke(((ERROR_CODE)resData.Result).ToString());
-                        Debug.Log($"회원가입 실패: {((ERROR_CODE)resData.Result).ToString()}");
-                    }
+                        if (resData.Result == (short)ERROR_CODE.NONE)
+                        {
+                            OnRegisterSuccess?.Invoke();
+                            Debug.Log("회원가입 성공");
+                        }
+                        else
+                        {
+                            OnRegisterFailed?.Invoke(((ERROR_CODE)resData.Result).ToString());
+                            Debug.Log($"회원가입 실패: {((ERROR_CODE)resData.Result).ToString()}");
+                        }
+                    });
                 }
                 break;
 
             case PACKETID.RES_USER_INFO_UPDATE:
                 {
-                    // 서버가 "Level 업데이트 결과"를 보내는 응답이라고 가정
                     var resData = MessagePackSerializer.Deserialize<PKTResUserInfoUpdate>(packet.BodyData);
 
-                    if (resData.Result == (short)ERROR_CODE.NONE)
+                    MainThreadDispatcher.Post(() =>
                     {
-                        OnUpdateSuccess?.Invoke();
-                        Debug.Log("유저 Level 업데이트 성공");
-                    }
-                    else
-                    {
-                        OnUpdateFailed?.Invoke(((ERROR_CODE)resData.Result).ToString());
-                        Debug.Log($"유저 Level 업데이트 실패: {((ERROR_CODE)resData.Result).ToString()}");
-                    }
+                        if (resData.Result == (short)ERROR_CODE.NONE)
+                        {
+                            OnUpdateSuccess?.Invoke();
+                            Debug.Log("유저 Level 업데이트 성공");
+                        }
+                        else
+                        {
+                            OnUpdateFailed?.Invoke(((ERROR_CODE)resData.Result).ToString());
+                            Debug.Log($"유저 Level 업데이트 실패: {((ERROR_CODE)resData.Result).ToString()}");
+                        }
+                    });
                 }
                 break;
 
@@ -391,17 +412,20 @@ public sealed class NetworkManager
                 {
                     var resData = MessagePackSerializer.Deserialize<PKTResUserInfoDelete>(packet.BodyData);
 
-                    if (resData.Result == (short)ERROR_CODE.NONE)
+                    MainThreadDispatcher.Post(() =>
                     {
-                        OnDeleteAccountSuccess?.Invoke();
-                        ClientState = CLIENT_STATE.CONNECTED;
-                        Debug.Log("계정 삭제 성공");
-                    }
-                    else
-                    {
-                        OnDeleteAccountFailed?.Invoke(((ERROR_CODE)resData.Result).ToString());
-                        Debug.Log($"계정 삭제 실패: {((ERROR_CODE)resData.Result).ToString()}");
-                    }
+                        if (resData.Result == (short)ERROR_CODE.NONE)
+                        {
+                            OnDeleteAccountSuccess?.Invoke();
+                            ClientState = CLIENT_STATE.CONNECTED;
+                            Debug.Log("계정 삭제 성공");
+                        }
+                        else
+                        {
+                            OnDeleteAccountFailed?.Invoke(((ERROR_CODE)resData.Result).ToString());
+                            Debug.Log($"계정 삭제 실패: {((ERROR_CODE)resData.Result).ToString()}");
+                        }
+                    });
                 }
                 break;
 

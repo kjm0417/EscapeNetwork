@@ -197,8 +197,8 @@ public class UserAuthUI : MonoBehaviour
     /// </summary>
     private void OnDeleteAccountClick()
     {
-        Debug.Log("계정 삭제 요청 - 실제 구현시 확인 다이얼로그 필요");
-        // TODO: NetworkManager.Instance.SendDeleteAccountRequest(usernameText.text, ???);
+        Debug.Log("계정 삭제 요청");
+        NetworkManager.Instance.SendDeleteAccountRequest();
     }
 
     /// <summary>
