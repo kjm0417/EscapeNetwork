@@ -63,93 +63,6 @@ namespace CSBaseLib
         public short Result;
     }
 
-
-
-    [MessagePackObject]
-    public class PKTReqRoomEnter
-    {
-        [Key(0)]
-        public int RoomNumber;
-    }
-
-    [MessagePackObject]
-    public class PKTResRoomEnter
-    {
-        [Key(0)]
-        public short Result;
-    }
-
-    [MessagePackObject]
-    public class PKTNtfRoomUserList
-    {
-        [Key(0)]
-        public List<string> UserIDList = new List<string>();
-    }
-
-    [MessagePackObject]
-    public class PKTNtfRoomNewUser
-    {
-        [Key(0)]
-        public string UserID;
-    }
-
-
-    [MessagePackObject]
-    public class PKTReqRoomLeave
-    {
-    }
-
-    [MessagePackObject]
-    public class PKTResRoomLeave
-    {
-        [Key(0)]
-        public short Result;
-    }
-
-    [MessagePackObject]
-    public class PKTNtfRoomLeaveUser
-    {
-        [Key(0)]
-        public string UserID;
-    }
-
-
-    [MessagePackObject]
-    public class PKTReqRoomChat
-    {
-        [Key(0)]
-        public string ChatMessage;
-    }
-
-
-    [MessagePackObject]
-    public class PKTNtfRoomChat
-    {
-        [Key(0)]
-        public string UserID;
-
-        [Key(1)]
-        public string ChatMessage;
-    }
-
-    [MessagePackObject]
-    public class PKTReqUserScoreUpdate
-    {
-        [Key(0)]
-        public string UserID;
-        [Key(1)]
-        public int NewScore;
-    }
-
-    [MessagePackObject]
-    public class PKTResUserScoreUpdate
-    {
-        [Key(0)]
-        public string UserID;
-        [Key(1)]
-        public int NewScore;
-    }
-
     //===============================================================
     //내가 사용할 패킷들
     // 로그인 요청
@@ -241,10 +154,123 @@ namespace CSBaseLib
         public short Result;
     }
 
+    // 채팅방 접속 나가기
+
     [MessagePackObject]
-    public class PK
+    public class PKTReqRoomEnter
     {
-    
+        [Key(0)]
+        public int RoomNumber;
+    }
+
+    [MessagePackObject]
+    public class PKTResRoomEnter
+    {
+        [Key(0)]
+        public short Result;
+    }
+
+    [MessagePackObject]
+    public class PKTNtfRoomUserList
+    {
+        [Key(0)]
+        public List<string> UserIDList = new List<string>();
+    }
+
+    [MessagePackObject]
+    public class PKTNtfRoomNewUser
+    {
+        [Key(0)]
+        public string UserID;
+    }
+
+    [MessagePackObject]
+    public class PKTReqRoomLeave
+    {
+    }
+
+    [MessagePackObject]
+    public class PKTResRoomLeave
+    {
+        [Key(0)]
+        public short Result;
+    }
+
+    [MessagePackObject]
+    public class PKTNtfRoomLeaveUser
+    {
+        [Key(0)]
+        public string UserID;
+    }
+
+
+    //==========================
+    // 룸채팅
+
+    [MessagePackObject]
+    public class PKTReqRoomChat
+    {
+        [Key(0)]
+        public string ChatMessage;
+    }
+
+    [MessagePackObject]
+    public class PKTNtfRoomChat
+    {
+        [Key(0)]
+        public string UserID;
+
+        [Key(1)]
+        public string ChatMessage;
+    }
+
+
+    //==========================
+    // Room Whisper 1ㄷ1 귓말
+
+    [MessagePackObject]
+    public class PKTReqRoomWhisper
+    {
+        [Key(0)]
+        public string ToUserID;
+
+        [Key(1)]
+        public string ChatMessage;
+    }
+
+    [MessagePackObject]
+    public class PKTNtfRoomWhisper
+    {
+        [Key(0)]
+        public string FromUserID;
+
+        [Key(1)]
+        public string ToUserID;
+
+        [Key(2)]
+        public string ChatMessage;
+    }
+
+
+    //==========================
+    // Ranking
+
+    [MessagePackObject]
+    public class PKTReqUserScoreUpdate
+    {
+        [Key(0)]
+        public string UserID;
+        [Key(1)]
+        public int NewScore;
+    }
+
+    [MessagePackObject]
+    public class PKTResUserScoreUpdate
+    {
+        [Key(0)]
+        public string UserID;
+        [Key(1)]
+        public int NewScore;
     }
 
 }

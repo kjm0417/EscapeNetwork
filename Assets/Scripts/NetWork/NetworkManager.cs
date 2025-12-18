@@ -49,7 +49,16 @@ public sealed class NetworkManager
     public static event Action OnDeleteAccountSuccess;
     public static event Action<string> OnDeleteAccountFailed;
 
+    //채팅관련 코드
+    public static event Action<int> OnRoomEnterSuccess;
+    public static event Action<string> OnRoomEnterFailed;
 
+    public static event Action<List<string>> OnRoomUserList;
+    public static event Action<string> OnRoomNewUser;
+    public static event Action<string> OnRoomLeaveUser;
+
+    public static event Action<string, string> OnRoomChat; // (userId, msg)
+    public static event Action<string, string, string> OnRoomWhisper; // (from, to, msg)
 
     private bool _isInitialized = false;
 
@@ -69,6 +78,7 @@ public sealed class NetworkManager
     Queue<byte[]> SendPacketQueue = new Queue<byte[]>();
 
     public string CurrentUserID { get; private set; } //현재 로그인 되어 있는 ID
+    public int CurrentRoomNumber { get; private set; } = PacketDef.INVALID_ROOM_NUMBER;
     /// <summary>
     /// 외부에서 인스턴스 생성 불가
     /// </summary>
@@ -113,6 +123,11 @@ public sealed class NetworkManager
 
         Debug.Log("NetworkManager initialized.");
         _isInitialized = true;
+    }
+
+    public void SetPendingRoomNumber(int roomNumber)
+    {
+        CurrentRoomNumber = roomNumber;
     }
 
     /// <summary>
@@ -234,7 +249,9 @@ public sealed class NetworkManager
     public void SetDisconnectd()
     {
         ClientState = CLIENT_STATE.NONE;
-        SendPacketQueue.Clear();
+        CurrentRoomNumber = PacketDef.INVALID_ROOM_NUMBER;
+        CurrentUserID = string.Empty;
+        SendPacketQueue.Clear();    
     }
 
     /// <summary>
@@ -338,6 +355,50 @@ public sealed class NetworkManager
     }
 
     /// <summary>
+    /// 룸 입장 요청을 전송한다
+    /// </summary>
+    public void SendRoomEnterRequest(int roomNumber)
+    {
+        var request = new CSBaseLib.PKTReqRoomEnter() { RoomNumber = roomNumber };
+        var body = MessagePackSerializer.Serialize(request);
+        var sendData = CSBaseLib.PacketToBytes.Make(CSBaseLib.PACKETID.REQ_ROOM_ENTER, body);
+        PostSendPacket(sendData);
+    }
+
+    /// <summary>
+    /// 룸 퇴장 요청을 전송한다
+    /// </summary>
+    public void SendRoomLeaveRequest()
+    {
+        var request = new CSBaseLib.PKTReqRoomLeave() { };
+        var body = MessagePackSerializer.Serialize(request);
+        var sendData = CSBaseLib.PacketToBytes.Make(CSBaseLib.PACKETID.REQ_ROOM_LEAVE, body);
+        PostSendPacket(sendData);
+    }
+
+    /// <summary>
+    /// 방 전체 채팅 요청을 전송한다
+    /// </summary>
+    public void SendRoomChat(string message)
+    {
+        var request = new CSBaseLib.PKTReqRoomChat() { ChatMessage = message };
+        var body = MessagePackSerializer.Serialize(request);
+        var sendData = CSBaseLib.PacketToBytes.Make(CSBaseLib.PACKETID.REQ_ROOM_CHAT, body);
+        PostSendPacket(sendData);
+    }
+
+    /// <summary>
+    /// 방 안 1:1 귓속말 요청을 전송한다(상대가 온라인+같은 방이어야 수신)
+    /// </summary>
+    public void SendRoomWhisper(string toUserId, string message)
+    {
+        var request = new CSBaseLib.PKTReqRoomWhisper() { ToUserID = toUserId, ChatMessage = message };
+        var body = MessagePackSerializer.Serialize(request);
+        var sendData = CSBaseLib.PacketToBytes.Make(CSBaseLib.PACKETID.REQ_ROOM_WHISPER, body);
+        PostSendPacket(sendData);
+    }
+
+    /// <summary>
     /// 수신된 패킷을 처리한다
     /// - (중요) UI SetActive 에러가 다시 나면, 여기서 이벤트 호출을 MainThreadDispatcher.Post로 감싸야 한다
     /// </summary>
@@ -430,8 +491,98 @@ public sealed class NetworkManager
                 }
                 break;
 
+            case PACKETID.RES_ROOM_ENTER:
+                {
+                    var resData = MessagePackSerializer.Deserialize<PKTResRoomEnter>(packet.BodyData);
+
+                    MainThreadDispatcher.Post(() =>
+                    {
+                        if (resData.Result == (short)ERROR_CODE.NONE)
+                        {
+                            ClientState = CLIENT_STATE.ROOM;
+                            OnRoomEnterSuccess?.Invoke(CurrentRoomNumber);
+                            Debug.Log($"방 입장 성공. RoomNumber={CurrentRoomNumber}");
+                        }
+                        else
+                        {
+                            var err = ((ERROR_CODE)resData.Result).ToString();
+                            OnRoomEnterFailed?.Invoke(err);
+                            Debug.Log($"방 입장 실패: {err}");
+                        }
+                    });
+                }
+                break;
+
+            case PACKETID.NTF_ROOM_USER_LIST:
+                {
+                    var ntfData = MessagePackSerializer.Deserialize<PKTNtfRoomUserList>(packet.BodyData);
+
+                    MainThreadDispatcher.Post(() =>
+                    {
+                        OnRoomUserList?.Invoke(ntfData.UserIDList);
+                    });
+                }
+                break;
+
+            case PACKETID.NTF_ROOM_NEW_USER:
+                {
+                    var ntfData = MessagePackSerializer.Deserialize<PKTNtfRoomNewUser>(packet.BodyData);
+
+                    MainThreadDispatcher.Post(() =>
+                    {
+                        OnRoomNewUser?.Invoke(ntfData.UserID);
+                    });
+                }
+                break;
+
+            case PACKETID.NTF_ROOM_LEAVE_USER:
+                {
+                    var ntfData = MessagePackSerializer.Deserialize<PKTNtfRoomLeaveUser>(packet.BodyData);
+
+                    MainThreadDispatcher.Post(() =>
+                    {
+                        OnRoomLeaveUser?.Invoke(ntfData.UserID);
+                    });
+                }
+                break;
+
+            case PACKETID.NTF_ROOM_CHAT:
+                {
+                    var ntfData = MessagePackSerializer.Deserialize<PKTNtfRoomChat>(packet.BodyData);
+
+                    MainThreadDispatcher.Post(() =>
+                    {
+                        OnRoomChat?.Invoke(ntfData.UserID, ntfData.ChatMessage);
+                    });
+                }
+                break;
+
+            case PACKETID.NTF_ROOM_WHISPER:
+                {
+                    var ntfData = MessagePackSerializer.Deserialize<PKTNtfRoomWhisper>(packet.BodyData);
+
+                    MainThreadDispatcher.Post(() =>
+                    {
+                        OnRoomWhisper?.Invoke(ntfData.FromUserID, ntfData.ToUserID, ntfData.ChatMessage);
+                    });
+                }
+                break;
+
+            case PACKETID.RES_ROOM_LEAVE:
+                {
+                    // 상태 정리는 네트워크 스레드에서 해도 되지만, UI와 동시에 엮이면 Post로 통일하는 게 안전함
+                    MainThreadDispatcher.Post(() =>
+                    {
+                        ClientState = CLIENT_STATE.LOGIN;
+                        CurrentRoomNumber = PacketDef.INVALID_ROOM_NUMBER;
+                        Debug.Log("방 퇴장 완료");
+                    });
+                }
+                break;
+
             default:
                 break;
         }
     }
+
 }
