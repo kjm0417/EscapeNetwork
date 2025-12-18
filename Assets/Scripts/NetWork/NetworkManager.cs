@@ -350,6 +350,7 @@ public sealed class NetworkManager
     /// </summary>
     public void SendLogoutRequest()
     {
+        CurrentUserID = string.Empty;
         ClientState = CLIENT_STATE.CONNECTED;
         Debug.Log("로그아웃 완료");
     }

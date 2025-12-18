@@ -345,6 +345,29 @@ public class ChatRoomUI : MonoBehaviour
     /// </summary>
     private void AppendSystemMessage(string msg)
     {
+        if (ShouldShowSystemMessage(msg) == false)
+            return;
+
+
         AppendChatLine($"[SYSTEM] {msg}");
+    }
+
+    /// <summary>
+    /// 시스템 메시지를 채팅창에 보여줄지 판단한다
+    /// </summary>
+    private bool ShouldShowSystemMessage(string msg)
+    {
+        if (string.IsNullOrEmpty(msg)) return false;
+
+        //남기고 싶은 것들만
+        // 1) 현재 인원
+        if (msg.StartsWith("현재 인원:"))
+            return true;
+
+        // 2) 누가 입장/퇴장
+        if (msg.EndsWith(" 입장") || msg.EndsWith(" 퇴장"))
+            return true;
+
+        return false;
     }
 }
