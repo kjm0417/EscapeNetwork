@@ -37,18 +37,19 @@ public sealed class NetworkManager
     private static readonly Lazy<NetworkManager> _instance = new(() => new NetworkManager());
     public static NetworkManager Instance => _instance.Value;
 
-    // 이벤트 정의 (UI 싱글톤과 함께 사용)
+    // 로그인, 회원가입
     public static event Action<string> OnLoginSuccess;
     public static event Action<string> OnLoginFailed;
     public static event Action OnRegisterSuccess;
     public static event Action<string> OnRegisterFailed;
 
-    // Level 업데이트 결과 이벤트 (이름은 기존 유지. 원하면 OnLevelUpdateSuccess로 바꿔줄게)
+    //업데이트, 삭제
     public static event Action OnUpdateSuccess;
     public static event Action<string> OnUpdateFailed;
-
     public static event Action OnDeleteAccountSuccess;
     public static event Action<string> OnDeleteAccountFailed;
+
+
 
     private bool _isInitialized = false;
 

@@ -28,12 +28,12 @@ namespace CSBaseLib
                 bodyDataSize = (UInt16)bodyData.Length;
             }
             var packetSize = (UInt16)(bodyDataSize + PacketDef.PACKET_HEADER_SIZE);
-                        
+
             var dataSource = new byte[packetSize];
             Buffer.BlockCopy(BitConverter.GetBytes(packetSize), 0, dataSource, 0, 2);
             Buffer.BlockCopy(BitConverter.GetBytes(pktID), 0, dataSource, 2, 2);
             dataSource[4] = type;
-            
+
             if (bodyData != null)
             {
                 Buffer.BlockCopy(bodyData, 0, dataSource, 5, bodyDataSize);
@@ -49,7 +49,7 @@ namespace CSBaseLib
             var bodySize = packetSize - PacketDef.PACKET_HEADER_SIZE;
 
             var packetBody = new byte[bodySize];
-            Buffer.BlockCopy(recvData, PacketDef.PACKET_HEADER_SIZE, packetBody,  0, bodySize);
+            Buffer.BlockCopy(recvData, PacketDef.PACKET_HEADER_SIZE, packetBody, 0, bodySize);
 
             return new Tuple<int, byte[]>(packetID, packetBody);
         }
@@ -121,7 +121,7 @@ namespace CSBaseLib
         public string ChatMessage;
     }
 
-    
+
     [MessagePackObject]
     public class PKTNtfRoomChat
     {
@@ -240,4 +240,11 @@ namespace CSBaseLib
         [Key(2)]
         public short Result;
     }
+
+    [MessagePackObject]
+    public class PK
+    {
+    
+    }
+
 }

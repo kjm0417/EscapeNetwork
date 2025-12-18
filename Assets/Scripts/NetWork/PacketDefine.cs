@@ -44,22 +44,11 @@ namespace CSBaseLib
 
         NTF_MUST_CLOSE       = 1005,
 
-        REQ_ROOM_ENTER = 1015,
-        RES_ROOM_ENTER = 1016,
-        NTF_ROOM_USER_LIST = 1017,
-        NTF_ROOM_NEW_USER = 1018,
-
-        REQ_ROOM_LEAVE = 1021,
-        RES_ROOM_LEAVE = 1022,
-        NTF_ROOM_LEAVE_USER = 1023,
-
         REQ_ROOM_DEV_ALL_ROOM_START_GAME = 1091,
         RES_ROOM_DEV_ALL_ROOM_START_GAME = 1092,
 
         REQ_ROOM_DEV_ALL_ROOM_END_GAME = 1093,
         RES_ROOM_DEV_ALL_ROOM_END_GAME = 1094,
-
-        
 
         REQ_USER_SEARCH = 1101,
         RES_USER_SEARCH = 1102,
@@ -95,10 +84,6 @@ namespace CSBaseLib
         REQ_LOGIN = 1002,
         RES_LOGIN = 1003,
 
-        //채팅 
-        REQ_ROOM_CHAT = 1026,
-        NTF_ROOM_CHAT = 1027,
-
         //회원가입
         REQ_USER_ACCESSION = 1095,
         RES_USER_ACCESSION = 1096,
@@ -110,6 +95,21 @@ namespace CSBaseLib
         //회원탈퇴
         REQ_USER_INFO_DELETE = 1099,
         RES_USER_INFO_DELETE = 1100,
+
+        //채팅서버 관련
+        REQ_ROOM_ENTER = 1015,
+        RES_ROOM_ENTER = 1016,
+
+        NTF_ROOM_USER_LIST = 1017,
+        NTF_ROOM_NEW_USER = 1018,
+
+        REQ_ROOM_LEAVE = 1021,
+        RES_ROOM_LEAVE = 1022,
+        NTF_ROOM_LEAVE_USER = 1023,
+
+        //채팅 
+        REQ_ROOM_CHAT = 1026,
+        NTF_ROOM_CHAT = 1027,
     }
 
     
