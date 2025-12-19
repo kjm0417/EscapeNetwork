@@ -26,7 +26,7 @@ public class UserAuthUI : MonoBehaviour
     [SerializeField] private Button showLoginButton;
 
     /// <summary>
-    /// 초기 진입 시 네트워크 초기화를 보장한다
+    /// 초기 진입 시 네트워크 초기화를 보장
     /// </summary>
     private void Awake()
     {
@@ -34,7 +34,7 @@ public class UserAuthUI : MonoBehaviour
     }
 
     /// <summary>
-    /// 시작 시 UI 초기화 + 버튼 연결 + 이벤트 구독을 설정한다
+    /// 시작 시 UI 초기화 + 버튼 연결 + 이벤트 구독을 설정
     /// </summary>
     private void Start()
     {
@@ -44,7 +44,7 @@ public class UserAuthUI : MonoBehaviour
     }
 
     /// <summary>
-    /// 오브젝트 파괴 시 이벤트 구독을 해제한다
+    /// 오브젝트 파괴 시 이벤트 구독을 해제
     /// </summary>
     private void OnDestroy()
     {
@@ -52,7 +52,7 @@ public class UserAuthUI : MonoBehaviour
     }
 
     /// <summary>
-    /// 로그인 상태에서 시작하도록 Canvas 활성/비활성을 세팅한다
+    /// 로그인 상태에서 시작하도록 Canvas 활성/비활성을 세팅
     /// </summary>
     private void InitCanvasState()
     {
@@ -63,7 +63,7 @@ public class UserAuthUI : MonoBehaviour
     }
 
     /// <summary>
-    /// 버튼 클릭 이벤트를 연결한다
+    /// 버튼 클릭 이벤트를 연결
     /// </summary>
     private void BindButtons()
     {
@@ -75,7 +75,7 @@ public class UserAuthUI : MonoBehaviour
     }
 
     /// <summary>
-    /// 네트워크 이벤트를 구독한다
+    /// 네트워크 이벤트를 구독
     /// </summary>
     private void SubscribeNetworkEvents()
     {
@@ -86,7 +86,7 @@ public class UserAuthUI : MonoBehaviour
     }
 
     /// <summary>
-    /// 네트워크 이벤트 구독을 해제한다
+    /// 네트워크 이벤트 구독을 해제
     /// </summary>
     private void UnsubscribeNetworkEvents()
     {
@@ -97,7 +97,7 @@ public class UserAuthUI : MonoBehaviour
     }
 
     /// <summary>
-    /// 로그인 패널을 표시한다
+    /// 로그인 패널을 표시
     /// </summary>
     private void ShowLoginPanel()
     {
@@ -106,7 +106,7 @@ public class UserAuthUI : MonoBehaviour
     }
 
     /// <summary>
-    /// 회원가입 패널을 표시한다
+    /// 회원가입 패널을 표시
     /// </summary>
     private void ShowRegisterPanel()
     {
@@ -149,7 +149,7 @@ public class UserAuthUI : MonoBehaviour
     }
 
     /// <summary>
-    /// 로그인 성공 시 MainCanvas로 전환한다
+    /// 로그인 성공 시 MainCanvas로 전환
     /// </summary>
     private void HandleLoginSuccess(string userId)
     {
@@ -162,7 +162,7 @@ public class UserAuthUI : MonoBehaviour
     }
 
     /// <summary>
-    /// 로그인 실패 메시지를 출력한다
+    /// 로그인 실패 메시지를 출력
     /// </summary>
     private void HandleLoginFailed(string error)
     {
@@ -170,7 +170,7 @@ public class UserAuthUI : MonoBehaviour
     }
 
     /// <summary>
-    /// 회원가입 성공 시 로그인 패널로 복귀한다
+    /// 회원가입 성공 시 로그인 패널로 복귀
     /// </summary>
     private void HandleRegisterSuccess()
     {
@@ -180,7 +180,7 @@ public class UserAuthUI : MonoBehaviour
     }
 
     /// <summary>
-    /// 회원가입 실패 메시지를 출력한다
+    /// 회원가입 실패 메시지를 출력
     /// </summary>
     private void HandleRegisterFailed(string error)
     {
@@ -188,7 +188,7 @@ public class UserAuthUI : MonoBehaviour
     }
 
     /// <summary>
-    /// 입력 필드를 초기화한다
+    /// 입력 필드를 초기화
     /// </summary>
     private void ClearInputs()
     {

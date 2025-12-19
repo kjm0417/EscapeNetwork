@@ -16,7 +16,7 @@ public class EndTrigger : MonoBehaviour, ITriggerAction
         SubmitRankingIfPossible();
 
         // 패킷 송신 시간 확보 후 씬 이동
-        StartCoroutine(LoadEndSceneAfterDelay());
+        SceneManager.LoadScene("EndScene");
     }
 
     /// <summary>

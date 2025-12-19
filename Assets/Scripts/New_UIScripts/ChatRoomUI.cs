@@ -4,9 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using CSBaseLib;
 
-/// <summary>
-/// ChatRoomCanvas 전용 UI를 관리
-/// </summary>
 public class ChatRoomUI : MonoBehaviour
 {
     [Header("Navigation")]
@@ -49,14 +46,6 @@ public class ChatRoomUI : MonoBehaviour
         RefreshRoomText(PacketDef.INVALID_ROOM_NUMBER);
         RefreshMemberUI();
         AppendSystemMessage("룸 번호를 입력하고 입장하세요.");
-    }
-
-    /// <summary>
-    /// 오브젝트 파괴 시 네트워크 이벤트 구독을 해제
-    /// </summary>
-    private void OnDestroy()
-    {
-        UnsubscribeNetworkEvents();
     }
 
     /// <summary>
@@ -136,7 +125,6 @@ public class ChatRoomUI : MonoBehaviour
         NetworkManager.Instance.SetPendingRoomNumber(roomNumber);
         NetworkManager.Instance.SendRoomEnterRequest(roomNumber);
 
-        AppendSystemMessage($"룸 입장 요청: {roomNumber}");
     }
 
     /// <summary>

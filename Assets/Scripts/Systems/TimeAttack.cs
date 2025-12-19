@@ -45,7 +45,7 @@ public class TimeAttack : MonoBehaviour
         int clearTimeMs = Mathf.RoundToInt(elapsedTime * 1000f);
 
         // 네트워크로 랭킹 제출(패킷 구현 후 연결)
-       NetworkManager.Instance.SendRankingSubmit(clearTimeMs);
+        NetworkManager.Instance.SendRankingSubmit(clearTimeMs);
     }
 
     public float GetElapsedTime()

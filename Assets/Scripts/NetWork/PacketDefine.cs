@@ -56,7 +56,7 @@ namespace CSBaseLib
         REQ_USER_SCORE_UPDATE = 1103,
         RES_USER_SCORE_UPDATE = 1104,   
 
-        CS_END          = 1200,
+        CS_END          = 7000,
 
 
         // 시스템, 서버 - 서버
@@ -120,11 +120,11 @@ namespace CSBaseLib
         NTF_ROOM_LEAVE_USER = 1023,
 
         //Ranking클리어 타임 제출
-        RES_RANKING_SUBMIT = 6102,   
-        REQ_RANKING_SUBMIT = 6101,     
+        RES_RANKING_SUBMIT = 1060,
+        REQ_RANKING_SUBMIT = 1061,
 
-        REQ_RANKING_GET_TOP = 6103,   
-        RES_RANKING_GET_TOP = 6104,   
+        REQ_RANKING_GET_TOP = 1062,
+        RES_RANKING_GET_TOP = 1063,
 
     }
 

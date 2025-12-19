@@ -2,10 +2,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-/// <summary>
-/// UserInfoCanvas 전용 UI 컨트롤러
-/// - Update / Delete / Logout 버튼 처리
-/// </summary>
 public class UserInfoUI : MonoBehaviour
 {
     [Header("Panel")]
@@ -13,23 +9,23 @@ public class UserInfoUI : MonoBehaviour
     [SerializeField] private GameObject userInfoCanvas;
 
     [Header("UserName UI")]
-    [SerializeField] private TMP_Text txtUserName;        // Img_UserName 안의 Text(TMP)
+    [SerializeField] private TMP_Text txtUserName;        
     
 
     [Header("Buttons")]
-    [SerializeField] private Button btnUserUpdate;        // Btn_UserUpdate
-    [SerializeField] private Button btnUserDelete;        // Btn_UserDelete
-    [SerializeField] private Button btnUserLogOut;        // Btn_UserLogOut
+    [SerializeField] private Button btnUserUpdate;        
+    [SerializeField] private Button btnUserDelete;        
+    [SerializeField] private Button btnUserLogOut;        
 
     [Header("Optional Update Panel")]
-    [SerializeField] private GameObject updatePanel;          // (선택) 레벨 입력용 패널
-    [SerializeField] private TMP_InputField inputLevel;       // (선택) 레벨 입력 InputField
-    [SerializeField] private Button btnUpdateConfirm;         // (선택) 업데이트 확정 버튼
-    [SerializeField] private Button btnUpdateCancel;          // (선택) 업데이트 취소 버튼
+    [SerializeField] private GameObject updatePanel;          
+    [SerializeField] private TMP_InputField inputLevel;       
+    [SerializeField] private Button btnUpdateConfirm;         
+    [SerializeField] private Button btnUpdateCancel;        
 
 
     /// <summary>
-    /// 시작 시 버튼/이벤트를 연결하고 UI를 초기화한다
+    /// 시작 시 버튼/이벤트를 연결하고 UI를 초기화
     /// </summary>
     private void Start()
     {
@@ -37,16 +33,7 @@ public class UserInfoUI : MonoBehaviour
         SubscribeNetworkEvents();
         RefreshUserName();
 
-        // 기본: UserInfo 그룹은 켜져있고, 업데이트 패널은 꺼둔다(있다면)
         HideUpdatePanel();
-    }
-
-    /// <summary>
-    /// 오브젝트 파괴 시 네트워크 이벤트 구독을 해제한다
-    /// </summary>
-    private void OnDestroy()
-    {
-        UnsubscribeNetworkEvents();
     }
 
     /// <summary>
@@ -63,7 +50,7 @@ public class UserInfoUI : MonoBehaviour
     }
 
     /// <summary>
-    /// NetworkManager 이벤트를 구독한다
+    /// NetworkManager 이벤트를 구독
     /// </summary>
     private void SubscribeNetworkEvents()
     {
@@ -80,7 +67,7 @@ public class UserInfoUI : MonoBehaviour
     }
 
     /// <summary>
-    /// NetworkManager 이벤트 구독을 해제한다
+    /// NetworkManager 이벤트 구독을 해제
     /// </summary>
     private void UnsubscribeNetworkEvents()
     {
@@ -94,11 +81,12 @@ public class UserInfoUI : MonoBehaviour
     }
 
     /// <summary>
-    /// 현재 로그인된 유저ID를 UI에 표시한다
+    /// 현재 로그인된 유저ID를 UI에 표시
     /// </summary>
     private void RefreshUserName()
     {
-        if (txtUserName == null) return;
+        if (txtUserName == null) 
+            return;
 
         var id = NetworkManager.Instance != null ? NetworkManager.Instance.CurrentUserID : string.Empty;
 
@@ -110,7 +98,7 @@ public class UserInfoUI : MonoBehaviour
 
 
     /// <summary>
-    /// 업데이트 패널을 보여준다(있을 때만)
+    /// 업데이트 패널을 보여줌
     /// </summary>
     private void ShowUpdatePanel()
     {
@@ -118,7 +106,7 @@ public class UserInfoUI : MonoBehaviour
     }
 
     /// <summary>
-    /// 업데이트 패널을 숨긴다(있을 때만)
+    /// 업데이트 패널을 숨김
     /// </summary>
     private void HideUpdatePanel()
     {
@@ -127,8 +115,7 @@ public class UserInfoUI : MonoBehaviour
 
     /// <summary>
     /// Update 버튼 클릭 처리
-    /// - UpdatePanel이 연결돼 있으면 패널을 띄운다
-    /// - 없으면 경고 로그만 출력한다
+
     /// </summary>
     private void OnClickUpdate()
     {
@@ -141,8 +128,6 @@ public class UserInfoUI : MonoBehaviour
             inputLevel.text = "";
             return;
         }
-
-        Debug.LogWarning("UpdatePanel이 연결되어 있지 않습니다. (updatePanel/inputLevel/confirm 버튼을 연결하면 레벨 업데이트 가능)");
     }
 
     /// <summary>
@@ -163,8 +148,6 @@ public class UserInfoUI : MonoBehaviour
 
     /// <summary>
     /// Logout 버튼 클릭 처리
-    /// - 서버에 로그아웃 패킷이 있다면 전송
-    /// - 없다면(혹은 서버에서 처리 안 한다면) 클라이언트 상태/화면만 초기화하는 방식으로도 가능
     /// </summary>
     private void OnClickLogout()
     {
@@ -203,18 +186,11 @@ public class UserInfoUI : MonoBehaviour
             return;
         }
 
-        // 숫자만 받게 하고 싶으면 주석 해제
-        // if (!int.TryParse(levelText, out _))
-        // {
-        //     Debug.LogWarning("레벨은 숫자만 입력해주세요.");
-        //     return;
-        // }
-
         NetworkManager.Instance.SendUpdateLevelRequest(id, levelText);
     }
 
     /// <summary>
-    /// 업데이트 취소 버튼 클릭 처리(원래 화면으로 복귀)
+    /// 업데이트 취소 버튼 클릭 처리
     /// </summary>
     private void OnClickUpdateCancel()
     {
@@ -222,7 +198,7 @@ public class UserInfoUI : MonoBehaviour
     }
 
     /// <summary>
-    /// 로그인 성공 시 유저 이름 표시를 갱신한다
+    /// 로그인 성공 시 유저 이름 표시를 갱신
     /// </summary>
     private void HandleLoginSuccess(string userID)
     {
@@ -230,7 +206,7 @@ public class UserInfoUI : MonoBehaviour
     }
 
     /// <summary>
-    /// 업데이트 성공 처리(패널 닫고 원래 화면으로)
+    /// 업데이트 성공 처리
     /// </summary>
     private void HandleUpdateSuccess()
     {
@@ -248,7 +224,7 @@ public class UserInfoUI : MonoBehaviour
     }
 
     /// <summary>
-    /// 계정 삭제 성공 처리(로그아웃과 동일하게 초기화)
+    /// 계정 삭제 성공 처리
     /// </summary>
     private void HandleDeleteSuccess()
     {

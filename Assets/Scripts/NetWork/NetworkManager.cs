@@ -57,8 +57,8 @@ public sealed class NetworkManager
     public static event Action<string> OnRoomNewUser;
     public static event Action<string> OnRoomLeaveUser;
 
-    public static event Action<string, string> OnRoomChat; // (userId, msg)
-    public static event Action<string, string, string> OnRoomWhisper; // (from, to, msg)
+    public static event Action<string, string> OnRoomChat; 
+    public static event Action<string, string, string> OnRoomWhisper; 
 
     //Ranking
     public static event Action<List<RankingItem>> OnRankingTopReceived;
@@ -83,6 +83,7 @@ public sealed class NetworkManager
 
     public string CurrentUserID { get; private set; } //현재 로그인 되어 있는 ID
     public int CurrentRoomNumber { get; private set; } = PacketDef.INVALID_ROOM_NUMBER;
+
     /// <summary>
     /// 외부에서 인스턴스 생성 불가
     /// </summary>
@@ -91,7 +92,7 @@ public sealed class NetworkManager
     }
 
     /// <summary>
-    /// 네트워크 스레드/버퍼를 초기화하고 서버에 접속한다
+    /// 네트워크 스레드/버퍼를 초기화하고 서버에 접속
     /// </summary>
     public void Initialize()
     {
@@ -276,7 +277,7 @@ public sealed class NetworkManager
     }
 
     /// <summary>
-    /// 로그인 요청 패킷을 전송한다
+    /// 로그인 요청 패킷을 전송
     /// </summary>
     public void SendLoginRequest(string username, string password)
     {
@@ -305,7 +306,7 @@ public sealed class NetworkManager
     }
 
     /// <summary>
-    /// (핵심) 유저 Level 업데이트 요청 패킷을 전송한다
+    /// (핵심) 유저 Level 업데이트 요청 패킷을 전송
     /// - CSBaseLib.PKTReqUserInfoUpdate에 Level 필드가 있어야 한다
     /// </summary>
     public void SendUpdateLevelRequest(string userID, string newLevel)
@@ -323,7 +324,7 @@ public sealed class NetworkManager
     }
 
     /// <summary>
-    /// 계정 삭제 요청 패킷을 전송한다
+    /// 계정 삭제 요청 패킷을 전송
     /// </summary>
     public void SendDeleteAccountRequest()
     {
@@ -336,14 +337,10 @@ public sealed class NetworkManager
         var request = new CSBaseLib.PKTReqUserInfoDelete()
         {
             UserID = CurrentUserID
-            // Password는 지금 구조에서는 굳이 필요 없음
         };
 
         var body = MessagePackSerializer.Serialize(request);
-        var sendData = CSBaseLib.PacketToBytes.Make(
-            CSBaseLib.PACKETID.REQ_USER_INFO_DELETE,
-            body
-        );
+        var sendData = CSBaseLib.PacketToBytes.Make(CSBaseLib.PACKETID.REQ_USER_INFO_DELETE,body);
 
         PostSendPacket(sendData);
         Debug.Log($"계정 삭제 요청 전송: {CurrentUserID}");
@@ -360,18 +357,19 @@ public sealed class NetworkManager
     }
 
     /// <summary>
-    /// 룸 입장 요청을 전송한다
+    /// 룸 입장 요청을 전송
     /// </summary>
     public void SendRoomEnterRequest(int roomNumber)
     {
         var request = new CSBaseLib.PKTReqRoomEnter() { RoomNumber = roomNumber };
+
         var body = MessagePackSerializer.Serialize(request);
         var sendData = CSBaseLib.PacketToBytes.Make(CSBaseLib.PACKETID.REQ_ROOM_ENTER, body);
         PostSendPacket(sendData);
     }
 
     /// <summary>
-    /// 룸 퇴장 요청을 전송한다
+    /// 룸 퇴장 요청을 전송
     /// </summary>
     public void SendRoomLeaveRequest()
     {
@@ -382,7 +380,7 @@ public sealed class NetworkManager
     }
 
     /// <summary>
-    /// 방 전체 채팅 요청을 전송한다
+    /// 방 전체 채팅 요청을 전송
     /// </summary>
     public void SendRoomChat(string message)
     {
@@ -393,7 +391,7 @@ public sealed class NetworkManager
     }
 
     /// <summary>
-    /// 방 안 1:1 귓속말 요청을 전송한다(상대가 온라인+같은 방이어야 수신)
+    /// 방 안 1:1 귓속말 요청을 전송
     /// </summary>
     public void SendRoomWhisper(string toUserId, string message)
     {
@@ -404,7 +402,7 @@ public sealed class NetworkManager
     }
 
     /// <summary>
-    /// 게임 클리어 타임(ms)을 서버에 제출한다
+    /// 게임 클리어 타임(ms)을 서버에 제출
     /// </summary>
     public void SendRankingSubmit(int clearTimeMs)
     {
@@ -414,18 +412,13 @@ public sealed class NetworkManager
             ClearTimeMs = clearTimeMs
         };
 
-        Debug.Log($"[NetworkManager] SendRankingSubmit called: {clearTimeMs}");
-
-        // (여기 아래에 상태 체크가 있으면 일단 로그도 찍어)
-        Debug.Log($"[NetworkManager] ClientState={ClientState}");
-
         var body = MessagePackSerializer.Serialize(req);
         var sendData = PacketToBytes.Make(CSBaseLib.PACKETID.REQ_RANKING_SUBMIT, body);
         PostSendPacket(sendData);
     }
 
     /// <summary>
-    /// Top N 랭킹을 요청한다
+    /// Top N 랭킹을 요청
     /// </summary>
     public void SendRankingGetTop(int count)
     {
@@ -442,8 +435,7 @@ public sealed class NetworkManager
   
 
     /// <summary>
-    /// 수신된 패킷을 처리한다
-    /// - (중요) UI SetActive 에러가 다시 나면, 여기서 이벤트 호출을 MainThreadDispatcher.Post로 감싸야 한다
+    /// 수신된 패킷을 처리
     /// </summary>
     void PacketProcess(PacketData packet)
     {

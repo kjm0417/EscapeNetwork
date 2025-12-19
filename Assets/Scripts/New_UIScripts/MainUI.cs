@@ -2,9 +2,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-/// <summary>
-/// MainCanvas(메인 메뉴)의 버튼 4개를 관리하고, 각 화면 Canvas를 켜고 끈다.
-/// </summary>
 public class MainUI : MonoBehaviour
 {
     [Header("Canvas Groups")]
@@ -25,7 +22,7 @@ public class MainUI : MonoBehaviour
     [SerializeField] private Button btnBackFromRanking;
 
     /// <summary>
-    /// 시작 시 기본 화면을 메인으로 설정하고 버튼을 연결한다
+    /// 시작 시 기본 화면을 메인으로 설정하고 버튼을 연결
     /// </summary>
     private void Start()
     {
@@ -34,7 +31,7 @@ public class MainUI : MonoBehaviour
     }
 
     /// <summary>
-    /// 버튼 클릭 이벤트를 연결한다
+    /// 버튼 클릭 이벤트를 연결
     /// </summary>
     private void BindButtons()
     {
@@ -49,7 +46,7 @@ public class MainUI : MonoBehaviour
     }
 
     /// <summary>
-    /// 게임 시작 버튼 처리(현재는 로그만 출력)
+    /// 게임 시작 버튼 처리
     /// </summary>
     private void OnClickGameStart()
     {
@@ -57,7 +54,7 @@ public class MainUI : MonoBehaviour
     }
 
     /// <summary>
-    /// 메인 메뉴 화면을 표시한다
+    /// 메인 메뉴 화면을 표시
     /// </summary>
     public void ShowMain()
     {
@@ -68,7 +65,7 @@ public class MainUI : MonoBehaviour
     }
 
     /// <summary>
-    /// 유저 정보 화면을 표시한다
+    /// 유저 정보 화면을 표시
     /// </summary>
     public void ShowUserInfo()
     {
@@ -79,7 +76,7 @@ public class MainUI : MonoBehaviour
     }
 
     /// <summary>
-    /// 채팅방 화면을 표시한다
+    /// 채팅방 화면을 표시
     /// </summary>
     public void ShowChatRoom()
     {
@@ -90,7 +87,7 @@ public class MainUI : MonoBehaviour
     }
 
     /// <summary>
-    /// 랭킹 화면을 표시한다
+    /// 랭킹 화면을 표시
     /// </summary>
     public void ShowRanking()
     {
