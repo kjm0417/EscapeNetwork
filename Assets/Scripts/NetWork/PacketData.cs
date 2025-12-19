@@ -252,25 +252,54 @@ namespace CSBaseLib
     }
 
 
-    //==========================
     // Ranking
-
     [MessagePackObject]
-    public class PKTReqUserScoreUpdate
+    public class PKTReqRankingSubmit
     {
         [Key(0)]
         public string UserID;
+
         [Key(1)]
-        public int NewScore;
+        public int ClearTimeMs;
     }
 
     [MessagePackObject]
-    public class PKTResUserScoreUpdate
+    public class PKTResRankingSubmit
     {
         [Key(0)]
-        public string UserID;
+        public short Result;
+
         [Key(1)]
-        public int NewScore;
+        public int ClearTimeMs;
+
+        [Key(2)]
+        public int Rank;
+    }
+
+    [MessagePackObject]
+    public class PKTReqRankingGetTop
+    {
+        [Key(0)] 
+        public int Count;
+    }
+
+    [MessagePackObject]
+    public class RankingItem
+    {
+        [Key(0)] 
+        public string UserID;
+
+        [Key(1)] 
+        public int ClearTimeMs;
+    }
+    [MessagePackObject]
+    public class PKTResRankingGetTop
+    {
+        [Key(0)] 
+        public short Result;
+
+        [Key(1)] 
+        public List<RankingItem> Items = new List<RankingItem>();
     }
 
 }

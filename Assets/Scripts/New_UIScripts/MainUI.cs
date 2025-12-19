@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 /// <summary>
@@ -52,7 +53,7 @@ public class MainUI : MonoBehaviour
     /// </summary>
     private void OnClickGameStart()
     {
-        Debug.Log("GameStart 클릭: 여기서 씬 이동/게임 시작 로직 연결");
+        SceneManager.LoadScene("GameMainScene");
     }
 
     /// <summary>

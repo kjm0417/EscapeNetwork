@@ -78,49 +78,54 @@ namespace CSBaseLib
         REQ_DB_LOGIN = 8101,
         RES_DB_LOGIN = 8102,
 
-            //====================================================
-            //내가 사용할 패킷 아이디
-            //로그인
-            REQ_LOGIN = 1002,
-            RES_LOGIN = 1003,
+        //====================================================
+        //내가 사용할 패킷 아이디
+        //로그인
+        REQ_LOGIN = 1002,
+        RES_LOGIN = 1003,
 
-            //회원가입
-            REQ_USER_ACCESSION = 1095,
-            RES_USER_ACCESSION = 1096,
+        //회원가입
+        REQ_USER_ACCESSION = 1095,
+        RES_USER_ACCESSION = 1096,
 
-            //회원정보 수정
-            REQ_USER_INFO_UPDATE = 1097,
-            RES_USER_INFO_UPDATE = 1098,
+        //회원정보 수정
+        REQ_USER_INFO_UPDATE = 1097,
+        RES_USER_INFO_UPDATE = 1098,
 
-            //회원탈퇴
-            REQ_USER_INFO_DELETE = 1099,
-            RES_USER_INFO_DELETE = 1100,
+        //회원탈퇴
+        REQ_USER_INFO_DELETE = 1099,
+        RES_USER_INFO_DELETE = 1100,
 
-            //채팅
-            //방 입장
-            REQ_ROOM_ENTER = 1015,
-            RES_ROOM_ENTER = 1016,
+        //채팅
+        //방 입장
+        REQ_ROOM_ENTER = 1015,
+        RES_ROOM_ENTER = 1016,
 
-            //채팅 방에서
-            REQ_ROOM_CHAT = 1026,
-            NTF_ROOM_CHAT = 1027,
+        //채팅 방에서
+        REQ_ROOM_CHAT = 1026,
+        NTF_ROOM_CHAT = 1027,
 
-            //채팅 1ㄷ1 귓말
-            REQ_ROOM_WHISPER = 1028,
-            NTF_ROOM_WHISPER = 1029,
+        //채팅 1ㄷ1 귓말
+        REQ_ROOM_WHISPER = 1028,
+        NTF_ROOM_WHISPER = 1029,
 
-            //룸에 들어온 리스트
-            NTF_ROOM_USER_LIST = 1017,
+        //룸에 들어온 리스트
+        NTF_ROOM_USER_LIST = 1017,
 
-            //새로 들어온 유저
-            NTF_ROOM_NEW_USER = 1018,
+        //새로 들어온 유저
+        NTF_ROOM_NEW_USER = 1018,
 
-            REQ_ROOM_LEAVE = 1021,
-            RES_ROOM_LEAVE = 1022,
-            NTF_ROOM_LEAVE_USER = 1023,
+        REQ_ROOM_LEAVE = 1021,
+        RES_ROOM_LEAVE = 1022,
+        NTF_ROOM_LEAVE_USER = 1023,
 
-        
-       
+        //Ranking클리어 타임 제출
+        RES_RANKING_SUBMIT = 6102,   
+        REQ_RANKING_SUBMIT = 6101,     
+
+        REQ_RANKING_GET_TOP = 6103,   
+        RES_RANKING_GET_TOP = 6104,   
+
     }
 
     

@@ -38,13 +38,18 @@ public class TimeAttack : MonoBehaviour
     /// </summary>
     public void GameClear()
     {
-        // 업적은 기존대로
+        // 업적
         AchievementManager.Instance.IncreseAchievement(EAchievementCode.TimeAttack, elapsedTime);
 
         // 랭킹 제출용: ms(정수)로 변환
         int clearTimeMs = Mathf.RoundToInt(elapsedTime * 1000f);
 
         // 네트워크로 랭킹 제출(패킷 구현 후 연결)
-       // NetworkManager.Instance.SendRankingSubmit(clearTimeMs);
+       NetworkManager.Instance.SendRankingSubmit(clearTimeMs);
+    }
+
+    public float GetElapsedTime()
+    {
+        return elapsedTime;
     }
 }

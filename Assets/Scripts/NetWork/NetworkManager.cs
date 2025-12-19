@@ -60,6 +60,10 @@ public sealed class NetworkManager
     public static event Action<string, string> OnRoomChat; // (userId, msg)
     public static event Action<string, string, string> OnRoomWhisper; // (from, to, msg)
 
+    //Ranking
+    public static event Action<List<RankingItem>> OnRankingTopReceived;
+    public static event Action<string> OnRankingError;
+
     private bool _isInitialized = false;
 
     CLIENT_STATE ClientState = CLIENT_STATE.NONE;
@@ -400,6 +404,44 @@ public sealed class NetworkManager
     }
 
     /// <summary>
+    /// 게임 클리어 타임(ms)을 서버에 제출한다
+    /// </summary>
+    public void SendRankingSubmit(int clearTimeMs)
+    {
+        var req = new PKTReqRankingSubmit
+        {
+            UserID = CurrentUserID,
+            ClearTimeMs = clearTimeMs
+        };
+
+        Debug.Log($"[NetworkManager] SendRankingSubmit called: {clearTimeMs}");
+
+        // (여기 아래에 상태 체크가 있으면 일단 로그도 찍어)
+        Debug.Log($"[NetworkManager] ClientState={ClientState}");
+
+        var body = MessagePackSerializer.Serialize(req);
+        var sendData = PacketToBytes.Make(CSBaseLib.PACKETID.REQ_RANKING_SUBMIT, body);
+        PostSendPacket(sendData);
+    }
+
+    /// <summary>
+    /// Top N 랭킹을 요청한다
+    /// </summary>
+    public void SendRankingGetTop(int count)
+    {
+        var req = new PKTReqRankingGetTop
+        {
+            Count = count
+        };
+
+        var body = MessagePackSerializer.Serialize(req);
+        var sendData = PacketToBytes.Make(CSBaseLib.PACKETID.REQ_RANKING_GET_TOP, body);
+        PostSendPacket(sendData);
+    }
+
+  
+
+    /// <summary>
     /// 수신된 패킷을 처리한다
     /// - (중요) UI SetActive 에러가 다시 나면, 여기서 이벤트 호출을 MainThreadDispatcher.Post로 감싸야 한다
     /// </summary>
@@ -581,6 +623,45 @@ public sealed class NetworkManager
                 }
                 break;
 
+            case PACKETID.RES_RANKING_SUBMIT:
+                {
+                    var resData = MessagePackSerializer.Deserialize<PKTResRankingSubmit>(packet.BodyData);
+
+                    MainThreadDispatcher.Post(() =>
+                    {
+                        if (resData.Result == (short)ERROR_CODE.NONE)
+                        {
+                            Debug.Log($"랭킹 제출 성공: {resData.ClearTimeMs}ms");
+                        }
+                        else
+                        {
+                            var err = ((ERROR_CODE)resData.Result).ToString();
+                            Debug.LogError($"랭킹 제출 실패: {err}");
+                            OnRankingError?.Invoke(err);
+                        }
+                    });
+                }
+                break;
+
+            case PACKETID.RES_RANKING_GET_TOP:
+                {
+                    var resData = MessagePackSerializer.Deserialize<PKTResRankingGetTop>(packet.BodyData);
+
+                    MainThreadDispatcher.Post(() =>
+                    {
+                        if (resData.Result == (short)ERROR_CODE.NONE)
+                        {
+                            OnRankingTopReceived?.Invoke(resData.Items);
+                        }
+                        else
+                        {
+                            var err = ((ERROR_CODE)resData.Result).ToString();
+                            Debug.LogError($"랭킹 조회 실패: {err}");
+                            OnRankingError?.Invoke(err);
+                        }
+                    });
+                }
+                break;
             default:
                 break;
         }
