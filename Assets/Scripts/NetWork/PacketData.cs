@@ -225,7 +225,6 @@ namespace CSBaseLib
     }
 
 
-    //==========================
     // Room Whisper 1ㄷ1 귓말
 
     [MessagePackObject]

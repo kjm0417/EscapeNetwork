@@ -580,7 +580,7 @@ public sealed class NetworkManager
                     });
                 }
                 break;
-
+                    
             case PACKETID.NTF_ROOM_CHAT:
                 {
                     var ntfData = MessagePackSerializer.Deserialize<PKTNtfRoomChat>(packet.BodyData);
